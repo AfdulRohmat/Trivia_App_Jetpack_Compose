@@ -1,6 +1,7 @@
 package com.example.triviaapp.di
 
 import com.example.triviaapp.trivia_feature.network.QuestionApi
+import com.example.triviaapp.trivia_feature.repository.QuestionRepository
 import com.example.triviaapp.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -13,6 +14,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    // PROVIDE NETWORK --RETROFIT
     @Singleton
     @Provides
     fun provideTriviaApi(): QuestionApi {
@@ -20,6 +23,11 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(QuestionApi::class.java)
     }
+
+    // PROVIDE ALL REPOSITORY
+    @Singleton
+    @Provides
+    fun provideQuestionRepository(questionApi: QuestionApi) = QuestionRepository(questionApi)
 
 
 }
