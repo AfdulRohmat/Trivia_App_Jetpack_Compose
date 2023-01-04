@@ -1,6 +1,5 @@
 package com.example.triviaapp.trivia_feature.view.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.triviaapp.trivia_feature.model.QuestionModelItem
@@ -24,22 +22,24 @@ import com.example.triviaapp.utils.AppColors
 
 @Composable
 fun CustomRadioButton(
-    questionItem: String,
-    correctAnswer: String
-) {
+    answerOption: String,
+    correctAnswer: String,
+    selectedValue: String,
+    isSelectedItem: (String) -> Boolean,
+    onChangeState: (String) -> Unit,
+
+
+    ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
             .border(
-                width = 4.dp,
-                brush = Brush.linearGradient(
+                width = 4.dp, brush = Brush.linearGradient(
                     colors = listOf(
-                        AppColors.mDarkPurple,
-                        AppColors.mDarkPurple
+                        AppColors.mDarkPurple, AppColors.mDarkPurple
                     )
-                ),
-                shape = RoundedCornerShape(8.dp)
+                ), shape = RoundedCornerShape(8.dp)
             )
             .clip(
                 RoundedCornerShape(
@@ -50,39 +50,46 @@ fun CustomRadioButton(
                 )
             )
             .background(Color.Transparent)
-            .selectable(selected = true, onClick = {}, role = Role.RadioButton),
+            .selectable(
+                selected = isSelectedItem(answerOption),
+                onClick = { onChangeState(answerOption) },
+                role = Role.RadioButton
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
         // Radio Button
         RadioButton(
-            selected = false,
-            onClick = { },
+            selected = isSelectedItem(answerOption),
+            onClick = { null },
             colors = RadioButtonDefaults.colors(
                 unselectedColor = AppColors.mOffWhite,
-                selectedColor = Color.Red
+                selectedColor = if (selectedValue == correctAnswer) {
+                    Color.Green
+                } else {
+                    Color.Red
+                }
             )
         )
 
         // Text Option Answer
-        Text(text = questionItem, fontSize = 16.sp, color = AppColors.mOffWhite)
-
+        Text(text = answerOption, fontSize = 16.sp, color = AppColors.mOffWhite)
     }
 }
 
 @Composable
 fun CustomButton(
-    title: String,
-    onTapButton: () -> Unit
+    title: String, onTapButton: () -> Unit
 ) {
     Button(
         onClick = { onTapButton() },
         modifier = Modifier
             .fillMaxWidth(),
+        shape = RoundedCornerShape(34.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = AppColors.mLightBlue)
 
     ) {
-        Text(text = title, color = AppColors.mOffWhite)
+        Text(text = title, modifier = Modifier.padding(4.dp), color = AppColors.mOffWhite)
 
     }
 }

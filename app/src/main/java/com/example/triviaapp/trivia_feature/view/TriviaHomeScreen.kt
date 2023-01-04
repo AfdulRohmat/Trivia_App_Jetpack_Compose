@@ -4,20 +4,14 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,8 +30,7 @@ fun TriviaHome(questionViewModel: QuestionViewModel = hiltViewModel()) {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(horizontal = 8.dp, vertical = 16.dp)
-           ,
+            .padding(horizontal = 8.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.Start
     ) {
 
@@ -49,6 +42,13 @@ fun TriviaHome(questionViewModel: QuestionViewModel = hiltViewModel()) {
         val correctAnswer = remember {
             mutableStateOf("")
         }
+        val selectedValue = remember {
+            mutableStateOf("")
+        }
+        val isSelectedItem: (String) -> Boolean = { selectedValue.value == it }
+        val onChangeState: (String) -> Unit = { selectedValue.value = it }
+
+        val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
 
 
         fun goToNextQuestion() {
@@ -100,7 +100,6 @@ fun TriviaHome(questionViewModel: QuestionViewModel = hiltViewModel()) {
             }
 
             // DOT LINE
-            val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
             Box(modifier = Modifier.padding(vertical = 16.dp)) {
                 Canvas(
                     Modifier
@@ -128,12 +127,16 @@ fun TriviaHome(questionViewModel: QuestionViewModel = hiltViewModel()) {
 
 
             // CHOICE OPTION -- RADIO BUTTON
-            questionsData[indexQuestionNow.value].choices.forEachIndexed { index, questionItem ->
-                CustomRadioButton(questionItem = questionItem, correctAnswer = correctAnswer.value)
+            questionsData[indexQuestionNow.value].choices.forEachIndexed { index, answerOption ->
+                CustomRadioButton(
+                    answerOption = answerOption,
+                    correctAnswer = questionsData[indexQuestionNow.value].answer,
+                    selectedValue = selectedValue.value,
+                    isSelectedItem = { isSelectedItem(answerOption) },
+                    onChangeState = { onChangeState(answerOption) })
             }
 
-            // BUTTON NEXT QUESTION
-
+            // BUTTON NEXT / BACK QUESTION
             if (indexQuestionNow.value != questionsData.size) CustomButton(
                 title = "Next Question",
                 onTapButton = { goToNextQuestion() }) else Spacer(
