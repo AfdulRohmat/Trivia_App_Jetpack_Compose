@@ -8,6 +8,9 @@ This app is a trivia app made with Kotlin. Some of the application development t
 - Dagger Hilt for Dependency Injection
 - Kotlin Coroutines to handle development processes that run asynchronously
 
+Public API that I use to get a Trivia data:
+https://raw.githubusercontent.com/itmmckernan/triviaJSON/master/world.json
+
 Screenshot of the application UI
 
 ![ss 1](https://user-images.githubusercontent.com/77099599/210524180-e71d928f-95ea-49f2-ba88-552c0ad115a3.png)
